@@ -30,9 +30,14 @@
   {"user":"Shivani", "email":"shivanisha@chromium.org"},
   {"user":"Steven", "email":"svaldez@chromium.org"}
 ],
+"dashes": [
+  "cz-clock-dash",
+  "cz-review-latency-dash(true)",
+  "cz-review-load-dash",
+  "cz-calendar-feed-source"
+],
 "timezones": [
   {"city": "MTV", "timezone": "US/Pacific"},
   {"city": "CAM", "timezone": "America/New_York"}
-  ],
-"dashes": ["cz-review-load-dash", "cz-review-latency-dash", "cz-clock-dash"]
+  ]
 }
