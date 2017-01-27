@@ -1,0 +1,32 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<script src="chromez-behaviors.js"></script>
+
+<dom-module id="cz-codereview-stats">
+
+  <template>
+    <template is="dom-repeat" items="{{searchQueries}}">
+      <iron-ajax
+        auto
+        url="https://codereview.chromium.org/user/{{item.params.reviewer}}/stats_json/{{item.params.days}}"
+        on-response="handleResponse"></iron-ajax>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: "cz-codereview-stats",
+      behaviors: [ChromeZBehaviors.AJAXBehavior],
+
+      registerQuery: function(query, callback) {
+        this.addCallbackToQuery(query, callback,
+            {
+              reviewer: query.user,
+              days: query.days || 30
+            });
+      }
+    });
+  </script>
+
+</dom-module>
+

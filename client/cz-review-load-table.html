@@ -1,0 +1,65 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-datatable/paper-datatable.html">
+<link rel="import" href="../bower_components/paper-datatable/paper-datatable-column.html">
+
+<dom-module id="cz-reviewload-table">
+
+  <template>
+    <paper-card heading="Folks">
+      <paper-datatable data="[[users]">
+        <paper-datatable-column header="Name" property="user" sortable>
+        </paper-datatable-column>
+        <paper-datatable-column header="Reviews" property="reviews" sortable>
+        </paper-datatable-column>
+        <paper-datatable-column header="LGTMs" property="lgtms" sortable>
+        </paper-datatable-column>
+        <paper-datatable-column header="Average Latency" property="latency" sortable>
+        </paper-datatable-column>
+        <paper-datatable-column header="Reviews/day" property="reviews_per_day" sortable>
+        </paper-datatable-column>
+      </paper-datatable>
+    </paper-card>
+  </template>
+
+  <script>
+Polymer({
+  is: "cz-review-load-table",
+
+  properties: {
+    users: {
+      type: 'Object',
+      value: function() { return []; },
+      observer: "usersChanged"
+    },
+  },
+
+  attached: function() {
+    registerSource('cz-config', 'users', function(users) {
+      this.set('users', users);
+    }.bind(this));
+  },
+
+  usersChanged: function(users) {
+    users.forEach(function(user, idx) {
+      registerSource('cz-codereview-stats', { user: user.email }, function(data) {
+        if (data == null) {
+          return;
+        }
+
+        var results = data.results;
+        var reviews = results.issues.length;
+        var lgtms = results.lgtms.reduce((a, b) => a + b);
+        var latency = results.latency.filter(v => (v > 0)).reduce((a,b) => a + b) / 30;
+        var reviews_per_day = reviews / 30;
+
+        this.set('users.' + idx + '.reviews', reviews);
+        this.set('users.' + idx + '.lgtms', lgtms);
+        this.set('users.' + idx + '.latency', latency);
+        this.set('users.' + idx + '.reviews_per_day', reviews_per_day);
+      }.bind(this));
+    }.bind(this));
+  }
+});
+  </script>
+</dom-module>
